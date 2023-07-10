@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float runSpeed = 10f;
     [SerializeField] float jumpSpeed = 5f;
     [SerializeField] float climbSpeed = 5f;
+    [SerializeField] float normalGravity = 8f;
 
     void Start()
     {
@@ -66,7 +67,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void ClimbLadder() {
-        if(!myCapsuleCollider.IsTouchingLayers(LayerMask.GetMask("Ladders"))) return;
+
+        if(!myCapsuleCollider.IsTouchingLayers(LayerMask.GetMask("Ladders"))){
+            myRigidbody.gravityScale = normalGravity;
+            return;
+        } 
 
         bool playerHasVerticleSpeed = Mathf.Abs(myRigidbody.velocity.y) > Mathf.Epsilon;
 
@@ -78,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 climbVelocity = new Vector2(myRigidbody.velocity.x, moveInput.y * climbSpeed);
         myRigidbody.velocity = climbVelocity;
+        myRigidbody.gravityScale = 0f;
     }
 
     bool playerHasHorizontalSpeed() {
