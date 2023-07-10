@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,13 +7,17 @@ public class PlayerMovement : MonoBehaviour
     Vector2 moveInput;
     Rigidbody2D myRigidbody;
     SpriteRenderer spriteRenderer;
+    Animator myAnimator;
 
     [SerializeField] float runSpeed = 10f;
 
     void Start()
     {
+        // accessing components
         myRigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        myAnimator = GetComponent<Animator>();
+
     }
 
     void Update()
@@ -32,15 +34,23 @@ public class PlayerMovement : MonoBehaviour
     void Run() {
         Vector2 playerVelocity = new Vector2(moveInput.x * runSpeed, myRigidbody.velocity.y);
         myRigidbody.velocity = playerVelocity;
+
+        if (playerHasHorizontalSpeed()) {
+           myAnimator.SetBool("isRunning", true);
+        } else {
+           myAnimator.SetBool("isRunning", false);
+        }
+    }
+
+    bool playerHasHorizontalSpeed() {
+        return Mathf.Abs(myRigidbody.velocity.x) > Mathf.Epsilon;
     }
 
     void FlipSprite() {
-        float playerVelocity = myRigidbody.velocity.x;
-        bool playerHasHorizontalSpeed = Mathf.Abs(playerVelocity) > Mathf.Epsilon;
 
-        if (playerHasHorizontalSpeed)
+        if (playerHasHorizontalSpeed())
         {
-            if (playerVelocity < 0) {
+            if (myRigidbody.velocity.x < 0) {
                  spriteRenderer.flipX = true;
             } else {
                 spriteRenderer.flipX = false;
