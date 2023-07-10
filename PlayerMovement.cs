@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     Animator myAnimator;
 
     [SerializeField] float runSpeed = 10f;
+    [SerializeField] float jumpSpeed = 5f;
 
     void Start()
     {
@@ -31,6 +32,12 @@ public class PlayerMovement : MonoBehaviour
         Debug.Log(moveInput);
     }
 
+    void OnJump(InputValue value) {
+        if (value.isPressed) {
+            myRigidbody.velocity += new Vector2(0f, jumpSpeed);
+        }
+    }
+
     void Run() {
         Vector2 playerVelocity = new Vector2(moveInput.x * runSpeed, myRigidbody.velocity.y);
         myRigidbody.velocity = playerVelocity;
@@ -47,13 +54,11 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void FlipSprite() {
-
-        if (playerHasHorizontalSpeed())
-        {
-            if (myRigidbody.velocity.x < 0) {
-                 spriteRenderer.flipX = true;
-            } else {
-                spriteRenderer.flipX = false;
+        if (playerHasHorizontalSpeed()) {
+            if (moveInput.x < 0) {
+                transform.localScale = new Vector2(-1, 1);
+            } else if (moveInput.x > 0) {
+                transform.localScale = new Vector2(1, 1);
             }
         }
     }
