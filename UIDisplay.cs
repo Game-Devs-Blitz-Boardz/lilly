@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
+
 
 public class UIDisplay : MonoBehaviour
 {
@@ -26,5 +28,6 @@ public class UIDisplay : MonoBehaviour
     void Update()
     {
         healthSlider.value = playerHealth.GetHealth();
+        scoreText.text = scoreKeeper.GetCurScore().ToString("000000000"); 
     }
 }
