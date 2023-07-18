@@ -1,0 +1,68 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Health : MonoBehaviour
+{
+    [SerializeField] bool isPlayer;
+    [SerializeField] int health = 50;
+    [SerializeField] int score = 50;
+    [SerializeField] ParticleSystem hitEffect;
+
+    [SerializeField] bool applyCameraShake;
+    CameraShake cameraShake;
+    AudioPlayer audioPlayer;
+    ScoreKeeper scoreKeeper;
+
+
+    void Awake()
+        {
+            cameraShake = Camera.main.GetComponent<CameraShake>();
+            audioPlayer = FindObjectOfType<AudioPlayer>();
+            scoreKeeper = FindObjectOfType<ScoreKeeper>();
+        }
+
+    void OnTriggerEnter2D(Collider2D other) {
+        DamageDealer damageDealer = other.GetComponent<DamageDealer>();
+        if (damageDealer != null) {
+            TakeDamage(damageDealer.GetDamage());
+            ShakeCamera();
+            PlayHitEffect();
+            audioPlayer.PlayDamageClip();
+            damageDealer.Hit();
+        }
+    }
+
+    void TakeDamage(int tookenDamage) {
+        health -= tookenDamage;
+        if (health <= 0) {
+            Die();
+        }
+    }
+
+    void PlayHitEffect() {
+        if (hitEffect != null) {
+            ParticleSystem instance = Instantiate(hitEffect, transform.position, Quaternion.identity);
+            Destroy(instance.gameObject, instance.main.duration + instance.main.startLifetime.constantMax);
+        }
+    }
+
+    void ShakeCamera() {
+        if (cameraShake != null && applyCameraShake) {
+            cameraShake.Play();
+        }
+    }
+
+    void Die() {
+        if (!isPlayer) {
+            scoreKeeper.AddScore(score);
+        }
+        Destroy(gameObject);
+    }
+
+    public int GetHealth() {
+        return health;
+    }
+
+
+}
